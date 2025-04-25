@@ -1,0 +1,27 @@
+[project]
+name = "repository-miner"
+version = "__VERSION__"
+description = "Tool for mining git managed repositories"
+readme = "README.md"
+authors = [
+    { name = "Gerardo De Luisi" }
+]
+dependencies = []
+requires-python = ">=3.10"
+classifiers = [
+"Programming Language :: Python :: 3.10",
+"Programming Language :: Python :: 3.11",
+"Programming Language :: Python :: 3.12",
+"Programming Language :: Python :: 3.13",
+"License :: OSI Approved :: MIT License",
+"Operating System :: OS Independent",
+]
+keywords = ["git","projects","miner"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = "error"
+xfail_strict = true
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
