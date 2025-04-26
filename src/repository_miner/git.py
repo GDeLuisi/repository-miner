@@ -22,5 +22,3 @@ class Git():
             return getattr(self,name)
         name=name.replace("_","-")
         return partial(self._execute_command,name)
-
-.\src\repository_miner\git.py .\src\repository_miner\data_typing.py .\src\repository_miner\exceptions.py .\src\repository_miner\__init__.py .\src\repository_miner\helper.py .\src\repository_miner\utility.py tests .\pyproject.toml
