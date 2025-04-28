@@ -70,3 +70,26 @@ def test_create_batches(iterable,n,expected):
     else:
         with raises(ValueError):
             create_batches(iterable,n)
+
+@mark.parametrize("pretty,merges,author,follow,args,expected",[
+    param(r"%ad%h",True,"GDeLuisi","tests/test_helpers.py",["--all","--numstat"],'HEAD --max-count=1 --skip=0 --no-merges --pretty="format:%ad%h" --author="GDeLuisi" --all --numstat --follow -- "tests/test_helpers.py"'),
+    param(r"",False,None,"",[],'HEAD --max-count=1 --skip=0 --pretty="format:"'),
+    param(None,False,None,"",[],'HEAD --max-count=1 --skip=0'),
+])
+def test_log_builder(pretty,merges,author,follow,args,expected):
+    assert help.log_builder("HEAD",None,pretty,merges,1,0,author,follow,None,None,*args)== expected
+    with raises(ValueError) as e:
+        help.log_builder("HEAD",None,pretty,merges,0,0,author,follow,None,None,*args)
+        help.log_builder("HEAD",None,pretty,merges,0,-1,author,follow,None,None,*args)
+        
+@mark.parametrize("pretty,merges,author,args,expected",[
+    param(r"%ad%h",True,"GDeLuisi",["--all","--numstat"],'HEAD --max-count=1 --skip=0 --no-merges --pretty="format:%ad%h" --author="GDeLuisi" --all --numstat'),
+    param(r"",False,None,[],'HEAD --max-count=1 --skip=0 --pretty="format:"'),
+    param(None,False,None,[],'HEAD --max-count=1 --skip=0'),
+])
+def test_rev_list_builder(pretty,merges,author,args,expected):
+    assert help.rev_list_builder("HEAD",None,pretty,merges,1,0,author,None,None,*args)== expected
+    with raises(ValueError) as e:
+        help.rev_list_builder("HEAD",None,pretty,merges,0,0,author,None,None,*args)
+        help.rev_list_builder("HEAD",None,pretty,merges,0,-1,author,None,None,*args)
+    #HEAD --max-count=1 --skip=0 --no-merges --pretty="format:%ad%h" --author="GDeLuisi" --all --numstat --follow -- "tests/test_helpers.py"

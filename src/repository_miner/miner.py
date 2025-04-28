@@ -14,12 +14,12 @@ class RepoMiner():
     def log(self,from_commit:Optional[str]=None,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,follow:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,extra_args:Optional[Iterable[str]]=[])->str:
         if not from_commit:
             from_commit=get_head_commit(self.path)
-        return self.git.log(log_builder(self.path,from_commit,to_commit,pretty,merges,max_count,skip,author,follow,since,to,*extra_args))
+        return self.git.log(log_builder(from_commit,to_commit,pretty,merges,max_count,skip,author,follow,since,to,*extra_args))
     
     def rev_list(self,from_commit:Optional[str]=None,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,extra_args:Optional[Iterable[str]]=[])->str:
         if not from_commit:
             from_commit=get_head_commit(self.path)
-        return self.git.rev_list(rev_list_builder(self.path,from_commit,to_commit,pretty,merges,max_count,skip,author,since,to,*extra_args))
+        return self.git.rev_list(rev_list_builder(from_commit,to_commit,pretty,merges,max_count,skip,author,since,to,*extra_args))
     
     def local_branches(self):
         branches=self.git.branch("-l").split("\n")
