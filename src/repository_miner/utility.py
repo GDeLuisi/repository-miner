@@ -1,9 +1,17 @@
 import subprocess
 from math import floor,ceil
-from typing import Iterable
+from typing import Iterable,Callable,Any
 
+class Call():
+    def __init__(self,func:Callable[...,Any],*args,**kwargs):
+        self.func = func
+        self.args=args
+        self.kwargs=kwargs
+    def __call__(self, *args, **kwds):
+        return self.func(*self.args,**self.kwargs)
+    
 def execute_command(command:str)->str:
-    return subprocess.check_output(command,shell=True,text=True).strip()
+    return subprocess.check_output(command,shell=True,text=True,encoding="utf-8").strip(r'\n')
 
 def create_batches(it:Iterable,n:int)->Iterable[Iterable]:
     """create batches of n items for batch using the items in the iterable

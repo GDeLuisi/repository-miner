@@ -47,7 +47,7 @@ def range_builder(from_commmit:str,to_commit:Optional[str]=None)->str:
     else:
         return from_commmit
 
-def log_builder(from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,follow:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,*args)->str:
+def log_builder(from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,follow:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,args=[])->str:
     """Builds the complete command string for a log command
 
     Args:
@@ -84,7 +84,7 @@ def log_builder(from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str
         arg_list.append(f'--follow -- "{follow}"')
     return " ".join(arg_list)
 
-def rev_list_builder(from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,*args)->str:
+def rev_list_builder(from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,args=[])->str:
     """Builds the complete command string for a log command
 
     Args:

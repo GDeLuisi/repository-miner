@@ -9,3 +9,7 @@ class GitCmdError(Exception):
 class NotGitRepositoryError(Exception):
     def __init__(self, *args):
         super().__init__(*args)
+        
+class ParsingException(Exception):
+    def __init__(self, *args):
+        super().__init__(*args)
