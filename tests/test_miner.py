@@ -14,6 +14,7 @@ def test_log(git):
     res=git.retrieve_commits()
     t=check_output(f"git -C {main_path.as_posix()} log --pretty=format:%H",text=True,shell=True).splitlines()
     for i,c in enumerate(res):
+        print(c.commit_hash,t[i])
         assert c.commit_hash == t[i]
     
 def test_count(git):

@@ -11,7 +11,7 @@ class Call():
         return self.func(*self.args,**self.kwargs)
     
 def execute_command(command:str)->str:
-    return subprocess.check_output(command,shell=True,text=True,encoding="utf-8").strip(r'\n')
+    return subprocess.check_output(command,shell=True,text=True,encoding="utf-8").strip()
 
 def create_batches(it:Iterable,n:int)->Iterable[Iterable]:
     """create batches of n items for batch using the items in the iterable
