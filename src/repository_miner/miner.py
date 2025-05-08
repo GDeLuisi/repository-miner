@@ -39,7 +39,7 @@ class RepoMiner():
             raise ValueError(f"Cannot retrieve a tree from {treeish}")
     
     def iterate_tree(self,treeish:str,recursive:bool=False)->Generator[Union[Tree,Blob],None,None]:
-        p_format=r"--format=%(objectname)///%(objecttype)///%(objectsize)///%(path)"
+        p_format="--format=\"%(objectname)///%(objecttype)///%(objectsize)///%(path)\""
         args=[p_format]
         if recursive:
             args.append("-r")
