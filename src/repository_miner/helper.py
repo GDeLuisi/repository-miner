@@ -14,13 +14,13 @@ from datetime import datetime
 
 def date_builder(since:Optional[datetime]=None,to:Optional[datetime]=None)->list[str]:
     args=[]
-    if to and since and to>since:
+    if to and since and to<since:
         raise ValueError("'to' cannot come before 'since'")
     if since:
         d_str=since.strftime(r"%Y-%m-%d")
         args.append(f"--since='{d_str}'")
     if to:
-        d_str=since.strftime(r"%Y-%m-%d")
+        d_str=to.strftime(r"%Y-%m-%d")
         args.append(f"--until='{d_str}'")
     return args
     
@@ -39,13 +39,15 @@ def cmd_builder(command:str,repo:str,*args)->str:
     arg_string=arg_string + " "+ " ".join(args)
     return arg_string
 
-def range_builder(from_commmit:Optional[str],to_commit:Optional[str]=None)->str:
+def range_builder(from_commmit:str,to_commit:Optional[str]=None)->str:
+    if not from_commmit:
+        raise ValueError("'from_commit' parameter must always be valorized")
     if to_commit:
         return f"{to_commit}..{from_commmit}"
     else:
         return from_commmit
 
-def log_builder(repo:str,from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,follow:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,*args)->str:
+def log_builder(from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,follow:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,args=[])->str:
     """Builds the complete command string for a log command
 
     Args:
@@ -63,22 +65,26 @@ def log_builder(repo:str,from_commit:str,to_commit:Optional[str]=None,pretty:Opt
     """
     arg_list=[range_builder(from_commit,to_commit)]
     if max_count!=None:
+        if max_count<=0:
+            raise ValueError("max_count cannot be negative or 0")
         arg_list.append(f"--max-count={max_count}")
     if skip!=None:
+        if skip<0:
+            raise ValueError("skip cannot be negative")
         arg_list.append(f"--skip={skip}")
     if merges:
         arg_list.append("--no-merges")
     if pretty!=None:
         arg_list.append(f'--pretty="format:{pretty}"')
-    if author!=None:
+    if author:
         arg_list.append(f'--author="{author}"')
     arg_list.extend(date_builder(since,to))
     arg_list.extend(args)
-    if follow!=None:
+    if follow:
         arg_list.append(f'--follow -- "{follow}"')
     return " ".join(arg_list)
 
-def rev_list_builder(repo:str,from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,*args)->str:
+def rev_list_builder(from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,args=[])->str:
     """Builds the complete command string for a log command
 
     Args:
@@ -95,8 +101,12 @@ def rev_list_builder(repo:str,from_commit:str,to_commit:Optional[str]=None,prett
     """
     arg_list=[range_builder(from_commit,to_commit)]
     if max_count!=None:
+        if max_count<=0:
+            raise ValueError("max_count cannot be negative or 0")
         arg_list.append(f"--max-count={max_count}")
     if skip!=None:
+        if skip<0:
+            raise ValueError("skip cannot be negative")
         arg_list.append(f"--skip={skip}")
     if merges:
         arg_list.append("--no-merges")
@@ -129,7 +139,7 @@ def is_dir_a_repo(path:str)->bool:
     try:
         subprocess.check_call(cmd,shell=True)
         return True
-    except ChildProcessError:
+    except subprocess.CalledProcessError:
         return False
 
 def get_head_commit(path:str)->str:

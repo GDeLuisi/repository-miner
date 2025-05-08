@@ -25,6 +25,11 @@ pythonpath = [
 ]
 filterwarnings = "error"
 xfail_strict = true
+[tool.coverage.run]
+omit = [
+  "src/repository_miner/exceptions.py",
+   "src/repository_miner/data_typing.py"
+]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

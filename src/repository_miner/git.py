@@ -4,6 +4,7 @@ from .exceptions import *
 from functools import partial
 from typing import Iterable,Optional
 from datetime import datetime
+from subprocess import CalledProcessError
 class Git():
     def __init__(self,path:str):
         if not is_git_available():
@@ -13,9 +14,15 @@ class Git():
         self.path=path
 
     def _execute_command(self,command:str,*args)->str:
-        if len(args)==1 and not isinstance(args[0],str) and isinstance(args[0],Iterable):
-            return execute_command(cmd_builder(command,self.path,*args[0]))
-        return execute_command(cmd_builder(command,self.path,*args))
+        cmd=""
+        try:
+            if len(args)==1 and not isinstance(args[0],str) and isinstance(args[0],Iterable):
+                cmd=cmd_builder(command,self.path,*args[0])
+            else:
+                cmd=cmd_builder(command,self.path,*args)
+            return execute_command(cmd)
+        except CalledProcessError as e:
+            raise GitCmdError(f"Command {cmd} raised an error {e.stderr}")
     
     def __getattr__(self, name:str):
         if name in self.__dict__ or name in self.__class__.__dict__:
