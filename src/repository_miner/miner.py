@@ -61,7 +61,7 @@ class RepoMiner():
     
     def get_commit(self,commit_sha:str)->CommitInfo:
         pretty=r"%H///%T///%s///%an///%ae///%as///%D"
-        log=self.git.log(log_builder(commit_sha,None,pretty))
+        log=self.git.log(log_builder(commit_sha,None,pretty,max_count=1))
         c_hash,tree,sub,a_name,a_email,c_date,ref=log.split(r"///")
         return CommitInfoImpl(c_hash,c_hash[:7],tree,ref,sub,a_name,a_email,datetime.strptime(c_date,r"%Y-%m-%d"),Call(self.tree,tree))
     
@@ -70,13 +70,7 @@ class RepoMiner():
         for branch in branches:
             name=branch.strip("*").strip()
             yield HeadImpl(name,self.git.rev_parse(name),Call(self.retrieve_commits,from_commit=name,merges=True))
-    
-    def remote_branches(self)->Generator[Head,None,None]:
-        branches=self.git.branch("-r").split("\n")
-        for branch in branches:
-            name=branch.strip("*").strip()
-            yield Head(name,self.git.rev_parse(name),Call(self.retrieve_commits,from_commit=name,merges=True))
-            
+
     def authors(self)->set[Author]:
         pattern=re.compile(r'([A-Za-zÀ-ÖØ-öø-ÿé\s]+) <([a-z0-9A-ZÀ-ÖØ-öø-ÿé!#$%@.&*+\/=?^_{|}~-]+)> \(\d+\)')
         authors=set()

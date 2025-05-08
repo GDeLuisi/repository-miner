@@ -6,6 +6,7 @@ from pathlib import Path
 from subprocess import check_output
 from repository_miner.data_typing import *
 import re
+from pytest import raises
 main_path=Path.cwd()
 test_path=main_path.parent.joinpath("pandas")
 @fixture
@@ -46,9 +47,16 @@ def test_tree(git):
     traverse.sort(key=lambda a:a.hash)
     t_hash=[i.hash for i in traverse]
     assert t_hash  == t
+    with raises(ValueError):
+        tree=git.tree("askjbdkasdba")
         
 def test_author(git):
     git.authors()
+    
+def test_get_commit(git):
+    print(git.get_commit("HEAD"))
+    with raises(GitCmdError):
+        git.get_commit("asjhdbjashgdjhgas")
     
 def test_get_source(git):
     blobs= [i for i in git.iterate_tree("HEAD",True) if isinstance(i,Blob)]
