@@ -97,7 +97,7 @@ jobs:
       #
       # ALTERNATIVE: if your GitHub Release name is the PyPI project version string
       # ALTERNATIVE: exactly, uncomment the following line instead:https://test.pypi.org/manage/projects/
-      # url: https://pypi.org/project/repominer-GDeLuisi/${{needs.release-build.outputs.tag}}_${{matrix.p-version}}
+      url: https://pypi.org/project/repominer-GDeLuisi/${{needs.release-build.outputs.tag}}_${{matrix.p-version}}
     steps:
       - name: Retrieve release distributions
         uses: actions/download-artifact@v4
@@ -106,4 +106,6 @@ jobs:
           path: dist/
       - name: Publish release distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
 
