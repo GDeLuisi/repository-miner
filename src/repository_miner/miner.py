@@ -101,4 +101,4 @@ class RepoMiner():
                 raise TypeError(f"Hexsha {id} in not a blob")
         except GitCmdError:
             raise FileNotFoundError("Couldn't retrieve the object")
-        return re.split(string=self.git_repo.cat_file("-p",id),pattern=r"\r\n|\r|\n")
+        return re.split(string=self.git.cat_file("-p",id),pattern=r"\r\n|\r|\n")

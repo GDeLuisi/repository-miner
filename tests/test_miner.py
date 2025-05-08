@@ -4,6 +4,8 @@ from repository_miner import execute_command,cmd_builder
 from pytest import fixture
 from pathlib import Path
 from subprocess import check_output
+from repository_miner.data_typing import *
+import re
 main_path=Path.cwd()
 test_path=main_path.parent.joinpath("pandas")
 @fixture
@@ -38,7 +40,7 @@ def test_local_branches(git):
 
 def test_tree(git):
     tree = git.tree("HEAD")
-    t=check_output(f"git -C {main_path.as_posix()} ls-tree HEAD -r -t --format=%(objectname)",text=True,shell=True).split("\n")[:-1]
+    t=check_output(f"git -C {main_path.as_posix()} ls-tree HEAD -r -t --format=\"%(objectname)\" ",text=True,shell=True).split("\n")[:-1]
     t.sort()
     traverse=list(tree.traverse())
     traverse.sort(key=lambda a:a.hash)
@@ -47,3 +49,8 @@ def test_tree(git):
         
 def test_author(git):
     git.authors()
+    
+def test_get_source(git):
+    blobs= [i for i in git.iterate_tree("HEAD",True) if isinstance(i,Blob)]
+    for b in blobs:
+        assert b.get_source() == re.split(r"\r\n|\r|\n",check_output(f"git -C {main_path.as_posix()} cat-file -p {b.hash}",shell=True,text=True,encoding="utf-8").strip())
