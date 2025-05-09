@@ -83,7 +83,7 @@ class RepoMiner():
             if not match:
                 continue
             name,email=match.groups()
-            author = Author(name,email,[])
+            author = Author(email,name,[])
             for line in tmp:
                 author.commits_authored.append(line.strip())
             authors.add(author)
