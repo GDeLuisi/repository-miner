@@ -1,9 +1,8 @@
 from .utility import execute_command
-from .helper import cmd_builder,log_builder,rev_list_builder,get_head_commit,is_dir_a_repo,is_git_available
+from .helper import cmd_builder,is_dir_a_repo,is_git_available
 from .exceptions import *
 from functools import partial
-from typing import Iterable,Optional
-from datetime import datetime
+from typing import Iterable
 from subprocess import CalledProcessError
 class Git():
     def __init__(self,path:str):

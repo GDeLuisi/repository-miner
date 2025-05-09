@@ -137,7 +137,7 @@ def is_dir_a_repo(path:str)->bool:
     """
     cmd = f"git -C {Path(path).resolve().as_posix()} rev-parse HEAD"
     try:
-        subprocess.check_call(cmd,shell=True)
+        subprocess.check_call(cmd,shell=True,stdout=subprocess.DEVNULL)
         return True
     except subprocess.CalledProcessError:
         return False

@@ -36,7 +36,7 @@ def test_local_branches(git):
     assert set(res)==set(map(lambda h:h.name,heads))
     assert set(res_hashes)==set(map(lambda h:h.hash,heads))
     for head in heads:
-        res=len(check_output(f"git -C {main_path.as_posix()} log {head.name} --pretty='format:%h'",text=True,shell=True).splitlines())
+        res=len(check_output(f"git -C {main_path.as_posix()} log {head.name} --pretty=\"format:%h\"",text=True,shell=True).splitlines())
         assert res==len(list(head.traverse_commits()))
 
 def test_tree(git):
@@ -51,7 +51,7 @@ def test_tree(git):
         tree=git.tree("askjbdkasdba")
         
 def test_author(git):
-    git.authors()
+    print(git.authors())
     
 def test_get_commit(git):
     print(git.get_commit("HEAD"))
