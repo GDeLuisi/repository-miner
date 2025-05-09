@@ -1,5 +1,5 @@
 [project]
-name = "repository-miner"
+name = "repominer-GDeLuisi"
 version = "__VERSION__"
 description = "Tool for mining git managed repositories"
 readme = "README.md"
