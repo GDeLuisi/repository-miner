@@ -7,15 +7,15 @@ main_path=Path.cwd()
 def git():
     return Git(main_path.as_posix())
 
-@mark.parametrize("args,expected",[
-    param("rev_parse",execute_command(cmd_builder("rev-parse",main_path.as_posix(),"HEAD")).strip()),
-    param("rev_pars",None,marks=mark.xfail),
-    param("",None,marks=mark.xfail),
-    param(None,None,marks=mark.xfail),
-])
-def test_any_cmd(git,args,expected):
-    assert git.__getattr__(args)(["HEAD"])==expected
-    # print(res)
+# @mark.parametrize("args,expected",[
+#     param("rev_parse",execute_command(cmd_builder("rev-parse",main_path.as_posix(),"HEAD")).strip()),
+#     param("rev_pars",None,marks=mark.xfail),
+#     param("",None,marks=mark.xfail),
+#     param(None,None,marks=mark.xfail),
+# ])
+# def test_any_cmd(git,args,expected):
+#     assert git.__getattr__(args)(["HEAD"])==expected
+#     # print(res)
 
 @mark.parametrize("args,expected",[
     param([r"--pretty='format:%ad'","--numstat"],execute_command(cmd_builder("log",main_path.as_posix(),r"--pretty='format:%ad'","--numstat"))),

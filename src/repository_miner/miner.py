@@ -74,7 +74,7 @@ class RepoMiner():
     def authors(self)->set[Author]:
         pattern=re.compile(r'([A-Za-zÀ-ÖØ-öø-ÿé\s]+) <([a-z0-9A-ZÀ-ÖØ-öø-ÿé!#$%@.&*+\/=?^_{|}~-]+)> \(\d+\)')
         authors=set()
-        res=self.git.shortlog(["-e","--all","--pretty='format:%H'"])
+        res=self.git.shortlog(["-e","--all","--pretty=\"format:%H\""])
         res=res.split("\n\n")[:-1]
         for a_block in res:
             tmp=a_block.split("\n")
@@ -83,7 +83,7 @@ class RepoMiner():
             if not match:
                 continue
             name,email=match.groups()
-            author = Author(name,email,[])
+            author = Author(email,name,[])
             for line in tmp:
                 author.commits_authored.append(line.strip())
             authors.add(author)
