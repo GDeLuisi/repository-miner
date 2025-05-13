@@ -1,6 +1,7 @@
 import subprocess
 from typing import Iterable,Callable,Any
-
+import sys
+encoding = sys.stdout.encoding if sys.stdout.encoding else "utf-8"
 class Call():
     def __init__(self,func:Callable[...,Any],*args,**kwargs):
         self.func = func
@@ -10,8 +11,7 @@ class Call():
         return self.func(*self.args,**self.kwargs)
     
 def execute_command(command:str)->str:
-    return subprocess.check_output(command,shell=True,text=True,encoding="utf-8").strip()
-
+    return subprocess.check_output(command,shell=True,text=True,encoding=encoding).strip()
 def create_batches(it:Iterable,n:int)->Iterable[Iterable]:
     """create batches of n items for batch using the items in the iterable
 

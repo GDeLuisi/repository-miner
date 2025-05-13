@@ -72,7 +72,7 @@ def log_builder(from_commit:str,to_commit:Optional[str]=None,pretty:Optional[str
         if skip<0:
             raise ValueError("skip cannot be negative")
         arg_list.append(f"--skip={skip}")
-    if merges:
+    if not merges:
         arg_list.append("--no-merges")
     if pretty!=None:
         arg_list.append(f'--pretty="format:{pretty}"')
@@ -108,7 +108,7 @@ def rev_list_builder(from_commit:str,to_commit:Optional[str]=None,pretty:Optiona
         if skip<0:
             raise ValueError("skip cannot be negative")
         arg_list.append(f"--skip={skip}")
-    if merges:
+    if not merges:
         arg_list.append("--no-merges")
     if pretty!=None:
         arg_list.append(f'--pretty="format:{pretty}"')
