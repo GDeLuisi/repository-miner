@@ -5,6 +5,7 @@ from pytest import fixture
 from pathlib import Path
 from subprocess import check_output
 from repository_miner.data_typing import *
+from json import detect_encoding
 import re
 from pytest import raises
 main_path=Path.cwd()
@@ -61,4 +62,5 @@ def test_get_commit(git):
 def test_get_source(git):
     blobs= [i for i in git.iterate_tree("HEAD",True) if isinstance(i,Blob)]
     for b in blobs:
-        assert b.get_source() == re.split(r"\r\n|\r|\n",check_output(f"git -C {main_path.as_posix()} cat-file -p {b.hash}",shell=True,text=True,encoding="utf-8").strip())
+        by=check_output(f"git -C {main_path.as_posix()} cat-file -p {b.hash}",shell=True).strip()
+        assert b.get_source() == re.split(r"\r\n|\r|\n",by.decode(encoding=detect_encoding(by)))

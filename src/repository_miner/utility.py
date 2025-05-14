@@ -1,6 +1,7 @@
 import subprocess
 from typing import Iterable,Callable,Any
 import sys
+from json import detect_encoding
 encoding = sys.stdout.encoding if sys.stdout.encoding else "utf-8"
 class Call():
     def __init__(self,func:Callable[...,Any],*args,**kwargs):
@@ -11,7 +12,11 @@ class Call():
         return self.func(*self.args,**self.kwargs)
     
 def execute_command(command:str)->str:
-    return subprocess.check_output(command,shell=True,text=True,encoding=encoding).strip()
+    try:
+        return subprocess.check_output(command,shell=True,text=True,encoding=encoding).strip()
+    except UnicodeDecodeError as e:
+        tmp_encoding = detect_encoding(e.object)
+        return e.object.decode(encoding=tmp_encoding).strip()
 def create_batches(it:Iterable,n:int)->Iterable[Iterable]:
     """create batches of n items for batch using the items in the iterable
 
