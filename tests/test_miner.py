@@ -5,6 +5,7 @@ from pytest import fixture
 from pathlib import Path
 from subprocess import check_output
 from repository_miner.data_typing import *
+from concurrent.futures import ProcessPoolExecutor
 from json import detect_encoding
 import re
 from pytest import raises
@@ -64,3 +65,12 @@ def test_get_source(git):
     for b in blobs:
         by=check_output(f"git -C {main_path.as_posix()} cat-file -p {b.hash}",shell=True).strip()
         assert b.get_source() == re.split(r"\r\n|\r|\n",by.decode(encoding=detect_encoding(by)))
+        
+def test_pickle_compatibility(git):
+    with ProcessPoolExecutor() as exec:
+        commmits=exec.submit(git.retrieve_commit_list)
+        heads=exec.submit(git.local_branches_list)
+        items=exec.submit(git.resolve_tree,"HEAD")
+    assert commmits.result()==list(git.retrieve_commits())
+    assert heads.result()==list(git.local_branches())
+    assert items.result()==list(git.iterate_tree("HEAD"))

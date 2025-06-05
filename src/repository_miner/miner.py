@@ -11,6 +11,13 @@ class RepoMiner():
     def __init__(self,path:str):
         self.git=Git(path)
         self.path=path
+    #pickle interface methods for multiprocessing compatibility
+    def __getstate__(self):
+        state=self.__dict__.copy()
+        return state
+    
+    def __setstate__(self,state):
+        self.__dict__.update(state)
         
     def retrieve_commits(self,from_commit:Optional[str]=None,to_commit:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,follow:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,extra_args:Optional[Iterable[str]]=[])->Generator[CommitInfo,None,None]:
         if not from_commit:
@@ -23,6 +30,9 @@ class RepoMiner():
                 yield CommitInfoImpl(c_hash,c_hash[:7],tree,ref,sub,a_name,a_email,datetime.strptime(c_date,r"%Y-%m-%d"),Call(self.tree,tree))
             except ValueError as e:
                 raise ParsingException(f"Log {log} was not parsed")
+    
+    def retrieve_commit_list(self,from_commit:Optional[str]=None,to_commit:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,follow:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,extra_args:Optional[Iterable[str]]=[])->list[CommitInfo]:
+        return list(self.retrieve_commits(from_commit,to_commit,merges,max_count,skip,author,follow,since,to,extra_args))
     
     def n_commits(self,from_commit:Optional[str]=None,to_commit:Optional[str]=None,merges:bool=True,skip:Optional[int]=None,author:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None)->int:
         if not from_commit:
@@ -58,6 +68,9 @@ class RepoMiner():
             raise ValueError(f"Cannot retrieve a tree from {treeish}")
         except ValueError as e:
             raise ParsingException(f"Unable to parse tree line {line}")
+        
+    def resolve_tree(self,treeish:str,recursive:bool=False)->list[Union[Tree,Blob]]:
+        return list(self.iterate_tree(treeish,recursive))
     
     def get_commit(self,commit_sha:str)->CommitInfo:
         pretty=r"%H///%T///%s///%an///%ae///%as///%D"
@@ -71,6 +84,9 @@ class RepoMiner():
             name=branch.strip("*").strip()
             yield HeadImpl(name,self.git.rev_parse(name),Call(self.retrieve_commits,from_commit=name,merges=True))
 
+    def local_branches_list(self)->list[Head]:
+        return list(self.local_branches())
+    
     def authors(self)->set[Author]:
         pattern=re.compile(r'([A-Za-zÀ-ÖØ-öø-ÿé\s]+) <([a-z0-9A-ZÀ-ÖØ-öø-ÿé!#$%@.&*+\/=?^_{|}~-]+)> \(\d+\)')
         authors=set()

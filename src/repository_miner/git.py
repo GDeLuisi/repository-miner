@@ -28,3 +28,12 @@ class Git():
             return getattr(self,name)
         name=name.replace("_","-")
         return partial(self._execute_command,name)
+    
+    #pickle interface methods for multiprocessing compatibility
+    
+    def __getstate__(self):
+        state=self.__dict__.copy()
+        return state
+    
+    def __setstate__(self,state):
+        self.__dict__.update(state)
