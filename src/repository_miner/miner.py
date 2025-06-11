@@ -91,7 +91,7 @@ class RepoMiner():
         pattern=re.compile(r'([A-Za-zÀ-ÖØ-öø-ÿé\s]+) <([a-z0-9A-ZÀ-ÖØ-öø-ÿé!#$%@.&*+\/=?^_{|}~-]+)> \(\d+\)')
         authors=set()
         res=self.git.shortlog(["-e","--all","--pretty=\"format:%H\""])
-        res=res.split("\n\n")[:-1]
+        res=res.split("\n\n")
         for a_block in res:
             tmp=a_block.split("\n")
             author=tmp.pop(0).strip()
