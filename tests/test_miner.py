@@ -82,3 +82,4 @@ def test_get_tags(git):
     for r,t in zip(res_tags,tags):
         assert r==t.name
         assert git.get_commit(t.hash).subject==check_output(f"git -C {main_path.as_posix()} log {r} -1 --pretty=%s",text=True,shell=True).strip()
+
