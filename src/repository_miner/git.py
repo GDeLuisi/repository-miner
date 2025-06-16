@@ -21,7 +21,7 @@ class Git():
                 cmd=cmd_builder(command,self.path,*args)
             return execute_command(cmd)
         except CalledProcessError as e:
-            raise GitCmdError(f"Command {cmd} raised an error {e.stderr}")
+            raise GitCmdError(f"Command {cmd} raised an error {e}")
     
     def __getattr__(self, name:str):
         if name in self.__dict__ or name in self.__class__.__dict__:

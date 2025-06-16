@@ -91,7 +91,7 @@ class RepoMiner():
         pattern=re.compile(r'([A-Za-zÀ-ÖØ-öø-ÿé\s]+) <([a-z0-9A-ZÀ-ÖØ-öø-ÿé!#$%@.&*+\/=?^_{|}~-]+)> \(\d+\)')
         authors=set()
         res=self.git.shortlog(["-e","--all","--pretty=\"format:%H\""])
-        res=res.split("\n\n")[:-1]
+        res=res.split("\n\n")
         for a_block in res:
             tmp=a_block.split("\n")
             author=tmp.pop(0).strip()
@@ -112,3 +112,11 @@ class RepoMiner():
         except GitCmdError:
             raise FileNotFoundError("Couldn't retrieve the object")
         return re.split(string=self.git.cat_file("-p",id),pattern=r"\r\n|\r|\n")
+
+    def get_tags(self)->Generator[Head,None,None]:
+        lines=self.git.show_ref(["--tags"]).split("\n")
+        for line in lines:
+            hash,ref = line.split(" ",1)
+            tag=ref.removeprefix("refs/tags/")
+            yield HeadImpl(hash=hash,name=tag,retrieve_func=Call(self.retrieve_commits,from_commit=hash,merges=True))
+            

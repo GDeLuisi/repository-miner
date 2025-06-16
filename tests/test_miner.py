@@ -74,3 +74,12 @@ def test_pickle_compatibility(git):
     assert commmits.result()==list(git.retrieve_commits())
     assert heads.result()==list(git.local_branches())
     assert items.result()==list(git.iterate_tree("HEAD"))
+
+def test_get_tags(git):
+    res=check_output(f"git -C {main_path.as_posix()} tag -l",text=True,shell=True).strip()
+    res_tags=res.split("\n")
+    tags=list(git.get_tags())
+    for r,t in zip(res_tags,tags):
+        assert r==t.name
+        assert git.get_commit(t.hash).subject==check_output(f"git -C {main_path.as_posix()} log {r} -1 --pretty=%s",text=True,shell=True).strip()
+
