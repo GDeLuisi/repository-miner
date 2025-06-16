@@ -25,5 +25,6 @@ def test_any_cmd(git,args,expected):
 def test_any_arg(git,args,expected):
     assert git.log(*args)==expected
     # print(res.split('\n'))
-
-
+#TODO need to complete test cases as needed
+def test_git_grep(git):
+    print(git.grep(["-E","-n","-o","-I","TODO"]))
