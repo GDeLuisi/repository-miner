@@ -27,4 +27,4 @@ def test_any_arg(git,args,expected):
     # print(res.split('\n'))
 #TODO need to complete test cases as needed
 def test_git_grep(git):
-    print(git.grep(["-E","-n","-o","-I","\"TODO|FIXME\""]))
+    print(git.grep(["-E","-n","-o","-I",f'\"\\W+\\s*({"|".join(["TODO","FIXME"])}).+\"']))
