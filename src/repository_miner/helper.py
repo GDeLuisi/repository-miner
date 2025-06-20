@@ -135,7 +135,7 @@ def is_dir_a_repo(path:str)->bool:
     Returns:
         bool: Returns wheter the directory is a repo
     """
-    cmd = f"git -C {Path(path).resolve().as_posix()} rev-parse HEAD"
+    cmd = f"git -C \"{Path(path).resolve().as_posix()}\" rev-parse HEAD"
     try:
         subprocess.check_call(cmd,shell=True,stdout=subprocess.DEVNULL)
         return True
@@ -151,6 +151,6 @@ def get_head_commit(path:str)->str:
     Returns:
         str: Returns HEAD's commit sha
     """
-    cmd = f"git -C {Path(path).resolve().as_posix()} rev-parse HEAD"
+    cmd = f"git -C \"{Path(path).resolve().as_posix()}\" rev-parse HEAD"
     return subprocess.check_output(cmd,shell=True).decode()[:-1]
 
