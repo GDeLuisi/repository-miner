@@ -35,7 +35,7 @@ def cmd_builder(command:str,repo:str,*args)->str:
         str: The complete command as a string
     """
             
-    arg_string=f"git -C {repo} {command}"
+    arg_string=f"git -C \"{repo}\" {command}"
     arg_string=arg_string + " "+ " ".join(args)
     return arg_string
 

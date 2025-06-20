@@ -9,9 +9,9 @@ main_path=Path.cwd()
 
 @mark.parametrize("args,expected",
                 [param(None,None,marks=mark.xfail),
-                param(["--all"],f"git -C {main_path.as_posix()} log --all"),
-                param(["--all","--no-merges"],f"git -C {main_path.as_posix()} log --all --no-merges"),
-                param([],f"git -C {main_path.as_posix()} log")])
+                param(["--all"],f"git -C \"{main_path.as_posix()}\" log --all"),
+                param(["--all","--no-merges"],f"git -C \"{main_path.as_posix()}\" log --all --no-merges"),
+                param([],f"git -C \"{main_path.as_posix()}\" log")])
 def test_cmd_builder(args,expected):
     assert help.cmd_builder("log",main_path.as_posix(),*args).strip()==expected
     
