@@ -1,7 +1,7 @@
 from repository_miner.git import *
 from repository_miner import RepoMiner
 from repository_miner import execute_command,cmd_builder
-from pytest import fixture
+from pytest import fixture,mark,param
 from pathlib import Path
 from subprocess import check_output
 from repository_miner.data_typing import *
@@ -82,4 +82,22 @@ def test_get_tags(git):
     for r,t in zip(res_tags,tags):
         assert r==t.name
         assert git.get_commit(t.hash).subject==check_output(f"git -C {main_path.as_posix()} log {r} -1 --pretty=%s",text=True,shell=True).strip()
+        
+@mark.parametrize("name,expected",
+                [param(None,None,marks=mark.xfail),
+                param("1.1.0","72864113e4b38c572947482e88b2650a36dd715a"),
+                param("2.0.0",None,marks=mark.xfail),
+                ])
+def test_get_tag(git,name,expected):
+    tag=git.get_tag(name)
+    tag.hash==expected
+
+@mark.parametrize("name,expected",
+                [param(None,None,marks=mark.xfail),
+                param("development","a01c2aa2d056f8b18853a346d13289f37f2fe96b"),
+                param("not",None,marks=mark.xfail),
+                ])
+def test_get_branch(git,name,expected):
+    tag=git.get_branch(name)
+    tag.hash==expected
 
