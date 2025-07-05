@@ -82,7 +82,7 @@ def test_get_tags(git):
     for r,t in zip(res_tags,tags):
         assert r==t.name
         assert git.get_commit(t.hash).subject==check_output(f"git -C {main_path.as_posix()} log {r} -1 --pretty=%s",text=True,shell=True).strip()
-
+        
 @mark.parametrize("name,expected",
                 [param(None,None,marks=mark.xfail),
                 param("1.1.0","72864113e4b38c572947482e88b2650a36dd715a"),
@@ -100,3 +100,4 @@ def test_get_tag(git,name,expected):
 def test_get_branch(git,name,expected):
     tag=git.get_branch(name)
     tag.hash==expected
+

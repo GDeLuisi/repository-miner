@@ -132,4 +132,5 @@ class RepoMiner():
         hash,ref = line.split(" ",1)
         tag=ref.removeprefix("refs/tags/")
         return HeadImpl(hash=hash,name=tag,retrieve_func=Call(self.retrieve_commits,from_commit=hash,merges=True))
+
             
