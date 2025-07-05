@@ -22,11 +22,11 @@ class RepoMiner():
     def retrieve_commits(self,from_commit:Optional[str]=None,to_commit:Optional[str]=None,merges:bool=False,max_count:Optional[int]=None,skip:Optional[int]=None,author:Optional[str]=None,follow:Optional[str]=None,since:Optional[datetime]=None,to:Optional[datetime]=None,extra_args:Optional[Iterable[str]]=[])->Generator[CommitInfo,None,None]:
         if not from_commit:
             from_commit=get_head_commit(self.path)
-        pretty=r"%H///%T///%s///%an///%ae///%as///%D"
+        pretty=r"%H:-#_%T:-#_%s:-#_%an:-#_%ae:-#_%as:-#_%D"
         logs=self.git.log(log_builder(from_commit,to_commit,pretty,merges,max_count,skip,author,follow,since,to,extra_args))
         for log in logs.splitlines(False):
             try:
-                c_hash,tree,sub,a_name,a_email,c_date,ref=log.split(r"///")
+                c_hash,tree,sub,a_name,a_email,c_date,ref=log.split(r":-#_")
                 yield CommitInfoImpl(c_hash,c_hash[:7],tree,ref,sub,a_name,a_email,datetime.strptime(c_date,r"%Y-%m-%d"),Call(self.tree,tree))
             except ValueError as e:
                 raise ParsingException(f"Log {log} was not parsed")
@@ -73,9 +73,9 @@ class RepoMiner():
         return list(self.iterate_tree(treeish,recursive))
     
     def get_commit(self,commit_sha:str)->CommitInfo:
-        pretty=r"%H///%T///%s///%an///%ae///%as///%D"
+        pretty=r"%H:-#_%T:-#_%s:-#_%an:-#_%ae:-#_%as:-#_%D"
         log=self.git.log(log_builder(commit_sha,None,pretty,max_count=1))
-        c_hash,tree,sub,a_name,a_email,c_date,ref=log.split(r"///")
+        c_hash,tree,sub,a_name,a_email,c_date,ref=log.split(r":-#_")
         return CommitInfoImpl(c_hash,c_hash[:7],tree,ref,sub,a_name,a_email,datetime.strptime(c_date,r"%Y-%m-%d"),Call(self.tree,tree))
     
     def local_branches(self)->Generator[Head,None,None]:
