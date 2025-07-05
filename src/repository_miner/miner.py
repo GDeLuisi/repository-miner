@@ -79,10 +79,17 @@ class RepoMiner():
         return CommitInfoImpl(c_hash,c_hash[:7],tree,ref,sub,a_name,a_email,datetime.strptime(c_date,r"%Y-%m-%d"),Call(self.tree,tree))
     
     def local_branches(self)->Generator[Head,None,None]:
-        branches=self.git.branch("-l").splitlines()
-        for branch in branches:
-            name=branch.strip("*").strip()
-            yield HeadImpl(name,self.git.rev_parse(name),Call(self.retrieve_commits,from_commit=name,merges=True))
+        lines=self.git.show_ref(["--branches"]).split("\n")
+        for line in lines:
+            hash,ref = line.split(" ",1)
+            tag=ref.removeprefix("refs/heads/")
+            yield HeadImpl(hash=hash,name=tag,retrieve_func=Call(self.retrieve_commits,from_commit=hash,merges=True))
+
+    def get_branch(self,name:str)->Head:
+        line=self.git.show_ref(["--branches",name])
+        hash,ref = line.split(" ",1)
+        tag=ref.removeprefix("refs/heads/")
+        return HeadImpl(hash=hash,name=tag,retrieve_func=Call(self.retrieve_commits,from_commit=hash,merges=True))
 
     def local_branches_list(self)->list[Head]:
         return list(self.local_branches())
@@ -119,4 +126,10 @@ class RepoMiner():
             hash,ref = line.split(" ",1)
             tag=ref.removeprefix("refs/tags/")
             yield HeadImpl(hash=hash,name=tag,retrieve_func=Call(self.retrieve_commits,from_commit=hash,merges=True))
+
+    def get_tag(self,tag:str)->Head:
+        line=self.git.show_ref(["--tags",tag])
+        hash,ref = line.split(" ",1)
+        tag=ref.removeprefix("refs/tags/")
+        return HeadImpl(hash=hash,name=tag,retrieve_func=Call(self.retrieve_commits,from_commit=hash,merges=True))
             
