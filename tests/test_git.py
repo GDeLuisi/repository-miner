@@ -41,8 +41,8 @@ def test_any_cmd(git,version_checker,args,expected):
     # print(res)
 
 @mark.parametrize("args,expected",[
-    param([r"--pretty='format:%ad'","--numstat"],execute_command(cmd_builder("log",main_path.as_posix(),r"--pretty='format:%ad'","--numstat"))),
-    param("",execute_command(cmd_builder("log",main_path.as_posix()))),
+    param(["-5",r"--pretty='format:%ad'","--numstat"],execute_command(cmd_builder("log",main_path.as_posix(),r"--pretty='format:%ad'","--numstat","-5"))),
+    param(["-5"],execute_command(cmd_builder("log",main_path.as_posix(),"-5"))),
     param("-asda",None,marks=mark.xfail),
 ])
 def test_any_arg(git,version_checker,args,expected):
