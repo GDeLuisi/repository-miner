@@ -138,7 +138,7 @@ def test_get_tags(git,version_checker):
                 ])
 def test_get_tag(git,version_checker,name,expected):
     if not version_checker:
-        assert True
+        assert expected != None
         return
     tag=git.get_tag(name)
     tag.hash==expected
@@ -150,7 +150,7 @@ def test_get_tag(git,version_checker,name,expected):
                 ])
 def test_get_branch(git,version_checker,name,expected):
     if not version_checker:
-        assert True
+        assert expected != None
         return
     tag=git.get_branch(name)
     tag.hash==expected

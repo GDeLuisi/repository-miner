@@ -35,7 +35,7 @@ def version_checker():
 ])
 def test_any_cmd(git,version_checker,args,expected):
     if not version_checker:
-        assert True
+        assert expected != None
         return
     assert git.__getattr__(args)(["HEAD"])==expected
     # print(res)
