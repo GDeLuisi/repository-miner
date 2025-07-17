@@ -95,7 +95,7 @@ jobs:
       shell: bash
       run: |
         pytest --cov --cov-report json
-    - if: matrix.git-version != 2.29.0
+    - if: matrix.git-version != "2.29.0"
       name: Check coverage reports
       shell: bash
       run: |
