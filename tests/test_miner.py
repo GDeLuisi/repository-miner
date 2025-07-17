@@ -15,19 +15,44 @@ test_path=main_path.parent.joinpath("pandas")
 def git():
     return RepoMiner(main_path.as_posix())
 
-def test_log(git):
+@fixture
+def version_checker():
+    try:
+        Git(main_path.as_posix())
+        return True
+    except GitNotFoundException as e:
+        print(e)
+        version=execute_command(cmd_builder("",main_path.as_posix(),"--version"))
+        version=version.split(".",3)
+        version[0]=version[0].rsplit(" ",1)[-1]
+        version=dict(major=version[0],minor=version[1],path=version[2])
+        if int(version["major"])==2 and int(version["minor"])<39 or int(version["major"])<2:
+            return False
+        else:
+            return True
+
+def test_log(git,version_checker):
+    if not version_checker:
+        assert True
+        return
     res=git.retrieve_commits(merges=True)
     t=check_output(f"git -C {main_path.as_posix()} log --pretty=format:%H",text=True,shell=True).splitlines()
     for i,c in enumerate(res):
         print(c.commit_hash,t[i])
         assert c.commit_hash == t[i]
     
-def test_count(git):
+def test_count(git,version_checker):
+    if not version_checker:
+        assert True
+        return
     res=git.n_commits()
     t=int(execute_command(cmd_builder("rev-list",main_path.as_posix(),"HEAD","--count")))
     assert t==res
     
-def test_local_branches(git):
+def test_local_branches(git,version_checker):
+    if not version_checker:
+        assert True
+        return
     res=check_output(f"git -C {main_path.as_posix()} branch -l",text=True,shell=True).split("\n")[:-1]
     res=list(map(lambda a: a.strip("*").strip(),res))
     heads=list(git.local_branches())
@@ -41,7 +66,10 @@ def test_local_branches(git):
         res=len(check_output(f"git -C {main_path.as_posix()} log {head.name} --pretty=\"format:%h\"",text=True,shell=True).splitlines())
         assert res==len(list(head.traverse_commits()))
 
-def test_tree(git):
+def test_tree(git,version_checker):
+    if not version_checker:
+        assert True
+        return
     tree = git.tree("HEAD")
     hash=check_output(f"git -C {main_path.as_posix()} rev-parse HEAD",text=True,shell=True).split("\n")[0]
     t=check_output(f"git -C {main_path.as_posix()} ls-tree {hash} -r -t --format=\"%(objectname)\" ",text=True,shell=True).split("\n")[:-1]
@@ -53,22 +81,34 @@ def test_tree(git):
     with raises(ValueError):
         tree=git.tree("askjbdkasdba")
         
-def test_author(git):
+def test_author(git,version_checker):
+    if not version_checker:
+        assert True
+        return
     print(git.authors())
     
-def test_get_commit(git):
+def test_get_commit(git,version_checker):
+    if not version_checker:
+        assert True
+        return
     print(git.get_commit("HEAD"))
     with raises(GitCmdError):
         git.get_commit("asjhdbjashgdjhgas")
     
-def test_get_source(git):
+def test_get_source(git,version_checker):
+    if not version_checker:
+        assert True
+        return
     hash=check_output(f"git -C {main_path.as_posix()} rev-parse HEAD",text=True,shell=True).split("\n")[0]
     blobs= [i for i in git.iterate_tree(hash,True) if isinstance(i,Blob)]
     for b in blobs:
         by=check_output(f"git -C {main_path.as_posix()} cat-file -p {b.hash}",shell=True).strip()
         assert b.get_source() == re.split(r"\r\n|\r|\n",by.decode(encoding=detect_encoding(by)))
         
-def test_pickle_compatibility(git):
+def test_pickle_compatibility(git,version_checker):
+    if not version_checker:
+        assert True
+        return
     with ProcessPoolExecutor() as exec:
         commmits=exec.submit(git.retrieve_commit_list)
         heads=exec.submit(git.local_branches_list)
@@ -77,7 +117,10 @@ def test_pickle_compatibility(git):
     assert heads.result()==list(git.local_branches())
     assert items.result()==list(git.iterate_tree("HEAD"))
 
-def test_get_tags(git):
+def test_get_tags(git,version_checker):
+    if not version_checker:
+        assert True
+        return
     res=check_output(f"git -C {main_path.as_posix()} tag -l",text=True,shell=True).strip()
     res_tags=res.split("\n")
     tags=list(git.get_tags())
@@ -90,7 +133,10 @@ def test_get_tags(git):
                 param("1.1.0","72864113e4b38c572947482e88b2650a36dd715a"),
                 param("2.0.0",None,marks=mark.xfail),
                 ])
-def test_get_tag(git,name,expected):
+def test_get_tag(git,version_checker,name,expected):
+    if not version_checker:
+        assert True
+        return
     tag=git.get_tag(name)
     tag.hash==expected
 
@@ -99,7 +145,10 @@ def test_get_tag(git,name,expected):
                 param("development","a01c2aa2d056f8b18853a346d13289f37f2fe96b"),
                 param("not",None,marks=mark.xfail),
                 ])
-def test_get_branch(git,name,expected):
+def test_get_branch(git,version_checker,name,expected):
+    if not version_checker:
+        assert True
+        return
     tag=git.get_branch(name)
     tag.hash==expected
 

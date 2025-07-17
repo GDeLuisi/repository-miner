@@ -15,6 +15,8 @@ class Git():
         version=version.split(".",3)
         version[0]=version[0].rsplit(" ",1)[-1]
         self.version=dict(major=version[0],minor=version[1],path=version[2])
+        if int(self.version["major"])==2 and int(self.version["minor"])<39 or int(self.version["major"])<2:
+            raise GitNotFoundException("Git version must be >= 2.39")
 
     def _execute_command(self,command:str,*args)->str:
         cmd=""
