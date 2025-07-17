@@ -136,6 +136,7 @@ def test_get_tags(git,version_checker):
                 param("1.1.0","72864113e4b38c572947482e88b2650a36dd715a"),
                 param("2.0.0",None,marks=mark.xfail),
                 ])
+
 def test_get_tag(git,version_checker,name,expected):
     if not version_checker:
         assert expected != None
@@ -148,6 +149,7 @@ def test_get_tag(git,version_checker,name,expected):
                 param("development","a01c2aa2d056f8b18853a346d13289f37f2fe96b"),
                 param("not",None,marks=mark.xfail),
                 ])
+
 def test_get_branch(git,version_checker,name,expected):
     if not version_checker:
         assert expected != None
