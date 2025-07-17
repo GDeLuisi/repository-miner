@@ -62,7 +62,8 @@ def test_get_commit(git):
         git.get_commit("asjhdbjashgdjhgas")
     
 def test_get_source(git):
-    blobs= [i for i in git.iterate_tree("HEAD",True) if isinstance(i,Blob)]
+    hash=check_output(f"git -C {main_path.as_posix()} rev-parse HEAD",text=True,shell=True).split("\n")[0]
+    blobs= [i for i in git.iterate_tree(hash,True) if isinstance(i,Blob)]
     for b in blobs:
         by=check_output(f"git -C {main_path.as_posix()} cat-file -p {b.hash}",shell=True).strip()
         assert b.get_source() == re.split(r"\r\n|\r|\n",by.decode(encoding=detect_encoding(by)))
