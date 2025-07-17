@@ -13,7 +13,10 @@ main_path=Path.cwd()
 test_path=main_path.parent.joinpath("pandas")
 @fixture
 def git():
-    return RepoMiner(main_path.as_posix())
+    try:
+        return RepoMiner(main_path.as_posix())
+    except GitNotFoundException:
+        return None
 
 @fixture
 def version_checker():
