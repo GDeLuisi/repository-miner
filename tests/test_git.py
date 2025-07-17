@@ -47,7 +47,7 @@ def test_any_cmd(git,version_checker,args,expected):
 ])
 def test_any_arg(git,version_checker,args,expected):
     if not version_checker:
-        assert True
+        assert expected != None
         return
     assert git.log(*args)==expected
     # print(res.split('\n'))
