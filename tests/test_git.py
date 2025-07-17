@@ -28,3 +28,6 @@ def test_any_arg(git,args,expected):
 #TODO need to complete test cases as needed
 def test_git_grep(git):
     print(git.grep(["-E","-n","-o","-I",f'\"[^a-zA-Z0-9_]+\\s*({"|".join(["TODO","FIXME"])}).+\"']))
+
+def test_get_version(git):
+    print(git.version)

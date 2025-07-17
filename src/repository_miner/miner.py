@@ -11,6 +11,7 @@ class RepoMiner():
     def __init__(self,path:str):
         self.git=Git(path)
         self.path=path
+        self.branch_flag="--branches" if int(self.git.version["major"])>=2 and int(self.git.version["minor"])>=46 else "--heads"
     #pickle interface methods for multiprocessing compatibility
     def __getstate__(self):
         state=self.__dict__.copy()
@@ -79,14 +80,14 @@ class RepoMiner():
         return CommitInfoImpl(c_hash,c_hash[:7],tree,ref,sub,a_name,a_email,datetime.strptime(c_date,r"%Y-%m-%d"),Call(self.tree,tree))
     
     def local_branches(self)->Generator[Head,None,None]:
-        lines=self.git.show_ref(["--branches"]).split("\n")
+        lines=self.git.show_ref([self.branch_flag]).split("\n")
         for line in lines:
             hash,ref = line.split(" ",1)
             tag=ref.removeprefix("refs/heads/")
             yield HeadImpl(hash=hash,name=tag,retrieve_func=Call(self.retrieve_commits,from_commit=hash,merges=True))
 
     def get_branch(self,name:str)->Head:
-        line=self.git.show_ref(["--branches",name])
+        line=self.git.show_ref([self.branch_flag,name])
         hash,ref = line.split(" ",1)
         tag=ref.removeprefix("refs/heads/")
         return HeadImpl(hash=hash,name=tag,retrieve_func=Call(self.retrieve_commits,from_commit=hash,merges=True))

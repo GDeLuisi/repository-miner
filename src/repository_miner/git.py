@@ -11,6 +11,10 @@ class Git():
         if not is_dir_a_repo(path):
             raise NotGitRepositoryError(f"Directory {path} is not a git repository")
         self.path=path
+        version=execute_command(cmd_builder("",self.path,"--version"))
+        version=version.split(".",3)
+        version[0]=version[0].rsplit(" ",1)[-1]
+        self.version=dict(major=version[0],minor=version[1],path=version[2])
 
     def _execute_command(self,command:str,*args)->str:
         cmd=""
