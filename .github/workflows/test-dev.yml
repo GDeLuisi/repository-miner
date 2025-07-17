@@ -60,12 +60,13 @@ jobs:
       run: |
         git config --global core.autocrlf false
         git config --global core.eol lf
-        echo "Setting tracking of all branches"
-        "C:\Program Files\Git\bin\git.exe" config --global remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*" 
-        "C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --all -t --unshallow 
-        "C:\Program Files\Git\bin\git.exe" -c protocol.version=2 pull --all
+        echo "Starting track procedure of all branches"
+        git config --global remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*" 
+        git -c protocol.version=2 fetch --all -t --unshallow 
+        git -c protocol.version=2 pull --all
         set +e
-        for i in $("C:\Program Files\Git\bin\git.exe" branch -a | grep remote | grep -v HEAD); do "C:\Program Files\Git\bin\git.exe" branch --track ${i#remotes/origin/} $i; done
+        echo "Setting tracking of all branches"
+        for i in $(git branch -a | grep remote | grep -v HEAD);echo "Tracking $i"; do git branch --track ${i#remotes/origin/} $i; done
         set -e
     - if: runner.os != 'Windows'
       name: Config for Unix
