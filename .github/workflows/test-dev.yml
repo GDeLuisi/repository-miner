@@ -11,14 +11,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest","windows-latest","macos-latest"]
+        os: ["ubuntu-latest","macos-latest"]
         p-version: ["3.10","3.11","3.12","3.13"]
         git-version: [2.29.0, 2.50.1]
         include:
           - os: windows-2022
             git-version: 2.29.0.windows.1
-          - os: windows-2022
+            p-version: ["3.10","3.11","3.12","3.13"]
+          - os: windows-latest
             git-version: 2.50.1.windows.1
+            p-version: ["3.10","3.11","3.12","3.13"]
     runs-on: ${{matrix.os}}
     steps:
     - uses: actions/checkout@v4
