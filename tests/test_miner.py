@@ -43,7 +43,8 @@ def test_local_branches(git):
 
 def test_tree(git):
     tree = git.tree("HEAD")
-    t=check_output(f"git -C {main_path.as_posix()} ls-tree HEAD -r -t --format=\"%(objectname)\" ",text=True,shell=True).split("\n")[:-1]
+    hash=check_output(f"git -C {main_path.as_posix()} rev-parse HEAD",text=True,shell=True).split("\n")[0]
+    t=check_output(f"git -C {main_path.as_posix()} ls-tree {hash} -r -t --format=\"%(objectname)\" ",text=True,shell=True).split("\n")[:-1]
     t.sort()
     traverse=list(tree.traverse())
     traverse.sort(key=lambda a:a.hash)
