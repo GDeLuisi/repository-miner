@@ -66,7 +66,7 @@ jobs:
         git -c protocol.version=2 pull --all
         set +e
         echo "Setting tracking of all branches"
-        for i in $(git branch -a | grep remote | grep -v HEAD);echo "Tracking $i"; do git branch --track ${i#remotes/origin/} $i; done
+        for i in $(git branch -a | grep remote | grep -v HEAD);do ;echo "Tracking $i"; git branch --track ${i#remotes/origin/} $i; done
         set -e
     - if: runner.os != 'Windows'
       name: Config for Unix
