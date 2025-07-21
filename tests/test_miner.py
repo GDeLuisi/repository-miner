@@ -88,7 +88,18 @@ def test_author(git,version_checker):
     if not version_checker:
         assert True
         return
-    print(git.authors())
+    authors=git.authors()
+    author_list = check_output(f"git -C {main_path.as_posix()} shortlog -e -n -s --format=\"\" ",text=True,shell=True).split("\n")[:-1]
+    # print(author_list)
+    for author in author_list:
+        found=False
+        n_commits,name_email=author.strip().split("\t")
+        name,email=name_email.rsplit(" ",1)
+        for a in authors:
+            if name==a.name and f"<{a.email}>" == email:
+                found=True
+                break
+        assert found
     
 def test_get_commit(git,version_checker):
     if not version_checker:
